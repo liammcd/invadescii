@@ -38,6 +38,15 @@ void drawPlayer(WINDOW *win, Player *player) {
 
 void drawInvaders(WINDOW *win, Invader *invaders) {
 
+	Invader *i = invaders;
+	int x, y;
+	while (i != NULL) {
+		x = i->pos.x;
+		y = i->pos.y;
+		wmove(win, y, x);
+		waddch(win, 'x');
+		i = i->next;
+	}
 }
 
 void drawMissiles(WINDOW *win, Missile *missiles) {

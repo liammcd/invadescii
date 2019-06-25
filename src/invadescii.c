@@ -63,12 +63,14 @@ void *keyListener(void *_args) {
 void initGame(GameInfo *game) {
 
 	game->player = initPlayer(game->x, game->y);
+	game->invaders = initInvaders(game->x);
 }
 
 void gameLoop(GameInfo *game) {
 
 		int *input = NULL;
 		int _input;
+		int quit = 0;
 		
 		clock_t begin, end;
 
@@ -84,9 +86,7 @@ void gameLoop(GameInfo *game) {
 		pthread_create(&keyInput, &attr, keyListener, (void *)_args);
 
 		initGame(game);
-		
-		int quit = 0;
-
+	
 		while (quit == 0) {
 	
 			begin = clock();
@@ -114,10 +114,12 @@ void gameLoop(GameInfo *game) {
 			
 			/* Update locations, check collisions */
 			updateMissiles(game);
+			updateInvaders(game);
 			
 			/* Redraw */
 			werase(game->mainwin);
 			drawPlayer(game->mainwin, game->player);
+			drawInvaders(game->mainwin, game->invaders);
 			drawMissiles(game->mainwin, game->missiles);
 			wrefresh(game->mainwin);
 			

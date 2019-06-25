@@ -36,19 +36,31 @@ Player *initPlayer(int x, int y) {
 
 Invader *initInvaders(int x) {
 
-	Invader *invaders = (Invader *) malloc(sizeof(Invader));
+	Invader *invaders;
+	Invader *head;
 	
 	// Determine number of invaders to create (from x values?
 	
-	return invaders;
-}
-
-Missile *initMissiles() {
-
-	//Missile *missiles = (Missile *) malloc(sizeof(Missile));
-	//missiles->next = NULL;
-	//return missiles;
-	return NULL;
+	int val = floor(x/4);
+	int i;
+	
+	invaders = (Invader *) malloc(sizeof(Invader));
+	invaders->next = NULL;
+	invaders->pos.y = 0;
+	invaders->pos.x = 1;
+	invaders->direction = 1; // Start rightward
+	head = invaders;
+	
+	for (i = 1; i <= val; i++) {
+		invaders->next = (Invader *) malloc(sizeof(Invader));
+		invaders = invaders->next;
+		invaders->next = NULL;
+		invaders->pos.y = 0;
+		invaders->pos.x = 1 + i*2;
+		invaders->direction = 1;
+	} 
+	
+	return head;
 }
 
 void addMissile(Missile **missiles, Position pos, int dir) {
@@ -113,6 +125,51 @@ void updateMissiles(GameInfo *game) {
 		}
 		prev = m;
 		m = m->next;
+	}
+}
+
+void updateInvaders(GameInfo *game) {
+
+	Invader *i = game->invaders;
+	Invader *last;
+	switch (i->direction) {
+		
+		case LEFT:
+			if (i->pos.x - 2 < 0) { // Hit left wall
+				while (i != NULL) {
+					i->direction = 1;
+					i->pos.y = i->pos.y + 1;
+					i = i->next;
+				}
+			}
+			else { // Advance
+				while (i != NULL) {
+					i->pos.x = i->pos.x - 2;
+					i = i->next;
+				}
+			}
+			break;
+		case RIGHT:
+			while (i != NULL) {
+				last = i;
+				i = i->next;	
+			}
+			if (last->pos.x + 2 > game->x - 1) { // Hit right wall
+				i = game->invaders;
+				while (i != NULL) {
+					i->direction = 0; // Switch direction
+					i->pos.y = i->pos.y + 1;
+					i = i->next;
+				}
+			}
+			else { // Advance
+				i = game->invaders;
+				while (i != NULL) {
+					i->pos.x = i->pos.x + 2;
+					i = i->next;
+				}
+			}
+			break;
 	}
 }
 

@@ -3,6 +3,9 @@
 
 #include <curses.h>
 
+#define LEFT 0
+#define RIGHT 1
+
 typedef struct Position {
 	
 	int x, y;
@@ -42,9 +45,9 @@ typedef struct GameInfo {
 
 Player *initPlayer(int x, int y);
 Invader *initInvaders(int x);
-Missile *initMissiles();
 void addMissile(Missile **missiles, Position pos, int dir);
 void updateMissiles(GameInfo *game);
+void updateInvaders(GameInfo *game);
 void freeMissiles(Missile *missiles);
 
 #endif
