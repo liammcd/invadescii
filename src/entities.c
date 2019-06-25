@@ -83,3 +83,14 @@ void updateMissiles(Missile *missiles) {
 		m = m->next;
 	}
 }
+
+void freeMissiles(Missile *missiles) {
+
+	Missile *m = missiles;
+	Missile *next;
+	while (m != NULL) {
+		next = m->next;
+		free(m);
+		m = next;
+	}
+}

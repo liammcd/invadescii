@@ -33,5 +33,6 @@ Invader *initInvaders(int x);
 Missile *initMissiles();
 void addMissile(Missile **missiles, Position pos);
 void updateMissiles(Missile *missiles);
+void freeMissiles(Missile *missiles);
 
 #endif
