@@ -28,24 +28,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <time.h>
 #include <unistd.h>
 
-#include "entities.h"
 #include "draw.h"
+#include "entities.h"
 
 pthread_mutex_t lock;
 
 #define LOCK pthread_mutex_lock(&lock);
 #define UNLOCK pthread_mutex_unlock(&lock);
 #define TIMESTEP 0.15
-
-typedef struct GameInfo {
-
-	Player *player;
-	Invader *invaders;
-	Missile *missiles;
-	WINDOW *mainwin;
-	WINDOW *scorewin;
-	int x, y; // Screen size
-} GameInfo;
 
 typedef struct Args {
 
@@ -96,7 +86,7 @@ void gameLoop(GameInfo *game) {
 		initGame(game);
 		
 		int quit = 0;
-		
+
 		while (quit == 0) {
 	
 			begin = clock();
@@ -113,7 +103,7 @@ void gameLoop(GameInfo *game) {
 						game->player->pos.x = game->player->pos.x + 1;
 					break;
 				case ' ':
-					addMissile(&(game->missiles), game->player->pos);
+					addMissile(&(game->missiles), game->player->pos, 0);
 					break;
 				case 'q':
 					quit = 1;
@@ -123,7 +113,7 @@ void gameLoop(GameInfo *game) {
 			UNLOCK;
 			
 			/* Update locations, check collisions */
-			updateMissiles(game->missiles);
+			updateMissiles(game);
 			
 			/* Redraw */
 			werase(game->mainwin);

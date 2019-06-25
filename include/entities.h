@@ -1,6 +1,8 @@
 #ifndef _ENTITIES_H
 #define _ENTITIES_H
 
+#include <curses.h>
+
 typedef struct Position {
 	
 	int x, y;
@@ -28,11 +30,21 @@ typedef struct Invader {
 	struct Invader *next;
 } Invader;
 
+typedef struct GameInfo {
+
+	Player *player;
+	Invader *invaders;
+	Missile *missiles;
+	WINDOW *mainwin;
+	WINDOW *scorewin;
+	int x, y; // Screen size
+} GameInfo;
+
 Player *initPlayer(int x, int y);
 Invader *initInvaders(int x);
 Missile *initMissiles();
-void addMissile(Missile **missiles, Position pos);
-void updateMissiles(Missile *missiles);
+void addMissile(Missile **missiles, Position pos, int dir);
+void updateMissiles(GameInfo *game);
 void freeMissiles(Missile *missiles);
 
 #endif

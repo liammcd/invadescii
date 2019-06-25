@@ -51,7 +51,7 @@ Missile *initMissiles() {
 	return NULL;
 }
 
-void addMissile(Missile **missiles, Position pos) {
+void addMissile(Missile **missiles, Position pos, int dir) {
 
 	Missile *m = *missiles;
 	
@@ -60,6 +60,7 @@ void addMissile(Missile **missiles, Position pos) {
 		m = *missiles;
 		m->pos.x = pos.x;
 		m->pos.y = pos.y - 1;
+		m->direction = dir;
 		m->next = NULL;
 	}		
 	else {
@@ -72,14 +73,45 @@ void addMissile(Missile **missiles, Position pos) {
 		m->next = NULL;
 		m->pos.x = pos.x;
 		m->pos.y = pos.y - 1;
+		m->direction = dir;
 	}
 }
 
-void updateMissiles(Missile *missiles) {
+/* Advance missiles and check for collisions */
+void updateMissiles(GameInfo *game) {
 	
-	Missile *m = missiles;
+	Missile *m = game->missiles;
+	Missile *prev;
 	while (m != NULL) {
-		m->pos.y = m->pos.y - 1;
+		if (m->direction == 0) { // Up direction
+			if (m->pos.y - 1 < 0) { // Gone off screen, remove
+				if (m == game->missiles) { // Missile is at head of ll
+					game->missiles = m->next;
+					free(m);
+				}
+				else {
+					prev->next = m->next;
+					free(m);
+				}
+			}
+			else
+				m->pos.y = m->pos.y - 1;
+		}
+		else if (m->direction == 1) {// Down direction
+			if (m->pos.y + 1 > (game->y-2)) { // Gone off screen, remove
+				if (m == game->missiles) {
+					game->missiles = m->next;
+					free(m);
+				}
+				else {
+					prev->next = m->next;
+					free(m);
+				}
+			}
+			else
+				m->pos.y = m->pos.y + 1;
+		}
+		prev = m;
 		m = m->next;
 	}
 }
