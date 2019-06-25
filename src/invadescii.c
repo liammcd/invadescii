@@ -25,6 +25,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "entities.h"
@@ -34,6 +35,7 @@ pthread_mutex_t lock;
 
 #define LOCK pthread_mutex_lock(&lock);
 #define UNLOCK pthread_mutex_unlock(&lock);
+#define TIMESTEP 0.15
 
 typedef struct GameInfo {
 
@@ -71,15 +73,14 @@ void *keyListener(void *_args) {
 void initGame(GameInfo *game) {
 
 	game->player = initPlayer(game->x, game->y);
-//	initInvaders(&(game.invaders));
-	game ->missiles = initMissiles();
 }
 
 void gameLoop(GameInfo *game) {
 
-		//int *input = (int *) malloc(sizeof(int));
 		int *input = NULL;
 		int _input;
+		
+		clock_t begin, end;
 
 		pthread_t keyInput;
 		pthread_attr_t attr;
@@ -97,8 +98,9 @@ void gameLoop(GameInfo *game) {
 		int quit = 0;
 		
 		while (quit == 0) {
-
-			/* Get user input */
+	
+			begin = clock();
+			/* Get user input and update player position */
 			LOCK;
 			switch (_input) {
 			
@@ -129,10 +131,17 @@ void gameLoop(GameInfo *game) {
 			drawMissiles(game->mainwin, game->missiles);
 			wrefresh(game->mainwin);
 			
-			sleep(1);
+			end = clock();
+			double elap = ((double) end - begin)/CLOCKS_PER_SEC;
+			while (elap < TIMESTEP) {
+				end = clock();
+				elap = ((double) end - begin)/CLOCKS_PER_SEC;
+			}
 		}
 
 		pthread_cancel(keyInput);
+		free(game->player);
+		freeMissiles(game->missiles);
 		free(_args);		
 		free(input);
 }
@@ -156,6 +165,7 @@ int main(int argc, char *argv[]) {
 	game.scorewin = newwin(1, game.x, (game.y)-1, 0);
 	UNLOCK;
 	
+	refresh();
 	init_color(COLOR_GREEN, 0, 1000, 0);
 	init_pair(1, COLOR_GREEN, COLOR_BLACK);
 	wbkgd(game.mainwin, COLOR_PAIR(1));
