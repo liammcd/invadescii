@@ -8,10 +8,10 @@ SRC=src
 
 LIBS =-lncurses
 
-_DEPS = entities.h draw.h
+_DEPS = entities.h draw.h util.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = invadescii.o entities.o draw.o
+_OBJ = invadescii.o entities.o draw.o util.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 

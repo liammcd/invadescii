@@ -30,6 +30,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "draw.h"
 #include "entities.h"
+#include "util.h"
 
 pthread_mutex_t lock;
 
@@ -68,18 +69,16 @@ void initGame(GameInfo *game) {
 
 void gameLoop(GameInfo *game) {
 
-		int *input = NULL;
 		int _input;
 		int quit = 0;
-		
 		clock_t begin, end;
+		Args *_args = (Args *) malloc(sizeof(Args));
 
+		/* Thread setup */
 		pthread_t keyInput;
 		pthread_attr_t attr;
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-		
-		Args *_args = (Args *) malloc(sizeof(Args));
 		_args->mainwin = game->scorewin;
 		_args->buf = &_input;
 		
@@ -113,6 +112,7 @@ void gameLoop(GameInfo *game) {
 			UNLOCK;
 			
 			/* Update locations, check collisions */
+			fireRandom(game->missiles, game->invaders);
 			updateMissiles(game);
 			updateInvaders(game);
 			
@@ -135,33 +135,27 @@ void gameLoop(GameInfo *game) {
 		free(game->player);
 		freeMissiles(game->missiles);
 		free(_args);		
-		free(input);
 }
 
 int main(int argc, char *argv[]) {
 
+	GameInfo game;
 	
+	/* Ncurses setup */
 	initscr();
 	start_color();
 	curs_set(0);
 	noecho();
-	pthread_mutex_init(&lock, NULL);
-	keypad(stdscr, TRUE);
-	
-	GameInfo game;
-
 	getmaxyx(stdscr, game.y, game.x);
-
-	LOCK;
 	game.mainwin = newwin((game.y)-1, game.x, 0, 0);
 	game.scorewin = newwin(1, game.x, (game.y)-1, 0);
-	UNLOCK;
-	
-	refresh();
 	init_color(COLOR_GREEN, 0, 1000, 0);
 	init_pair(1, COLOR_GREEN, COLOR_BLACK);
 	wbkgd(game.mainwin, COLOR_PAIR(1));
 	wbkgd(game.scorewin, COLOR_PAIR(1));
+	refresh();
+
+	pthread_mutex_init(&lock, NULL);
 
 	gameLoop(&game);
 	
