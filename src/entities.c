@@ -94,6 +94,10 @@ void updateMissiles(GameInfo *game) {
 	
 	Missile *m = game->missiles;
 	Missile *prev;
+	Invader *invader;
+	Invader *prevInvader;
+	int px = game->player->pos.x;
+	int py = game->player->pos.y;
 	while (m != NULL) {
 		if (m->direction == 0) { // Up direction
 			if (m->pos.y - 1 < 0) { // Gone off screen, remove
@@ -106,8 +110,27 @@ void updateMissiles(GameInfo *game) {
 					free(m);
 				}
 			}
-			else
+			else { // Move up
 				m->pos.y = m->pos.y - 1;
+				// Check for collision with invaders
+				invader = game->invaders;
+				prevInvader = invader;
+				while (invader != NULL) {
+					if (invader->pos.x == m->pos.x && invader->pos.y == m->pos.y) {
+						// Collision; remove invader and missile
+						if (invader == game->invaders) {
+							game->invaders = invader->next;
+							free(invader);
+						}
+						else {
+							prevInvader->next = invader->next;
+							free(invader);
+						}
+					}
+					prevInvader = invader;
+					invader = invader->next;
+				}
+			}
 		}
 		else if (m->direction == 1) {// Down direction
 			if (m->pos.y + 1 > (game->y-2)) { // Gone off screen, remove
@@ -120,8 +143,43 @@ void updateMissiles(GameInfo *game) {
 					free(m);
 				}
 			}
-			else
+			else { // Move down
 				m->pos.y = m->pos.y + 1;
+				// Check for collision with player
+				if (m->pos.x == px && m->pos.y == py) {
+					game->player->health = game->player->health - 5;
+					if (m == game->missiles) {
+						game->missiles = m->next;
+						free(m);
+					}
+					else {
+						prev->next = m->next;
+						free(m);
+					}
+				}	
+				else if (m->pos.x == (px-1) && m->pos.y == py) {
+					game->player->health = game->player->health - 5;
+					if (m == game->missiles) {
+						game->missiles = m->next;
+						free(m);
+					}
+					else {
+						prev->next = m->next;
+						free(m);
+					}
+				}
+				else if (m->pos.x == (px+1) && m->pos.y == py) {
+					game->player->health = game->player->health - 5;
+					if (m == game->missiles) {
+						game->missiles = m->next;
+						free(m);
+					}
+					else {
+						prev->next = m->next;
+						free(m);
+					}
+				}	
+			}
 		}
 		prev = m;
 		m = m->next;
@@ -132,8 +190,9 @@ void updateInvaders(GameInfo *game) {
 
 	Invader *i = game->invaders;
 	Invader *last;
+	if (i == NULL)
+		return;
 	switch (i->direction) {
-		
 		case LEFT:
 			if (i->pos.x - 2 < 0) { // Hit left wall
 				while (i != NULL) {

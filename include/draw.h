@@ -8,5 +8,6 @@
 void drawPlayer(WINDOW *win, Player *player);
 void drawInvaders(WINDOW *win, Invader *invaders);
 void drawMissiles(WINDOW *win, Missile *missiles);
+void drawHealth(WINDOW *win, Player *player);
 
 #endif

@@ -61,3 +61,10 @@ void drawMissiles(WINDOW *win, Missile *missiles) {
 		m = m->next;
 	}
 }
+
+void drawHealth(WINDOW *win, Player *player) {
+
+	werase(win);
+	wprintw(win, "HEALTH: %d", player->health);
+	wrefresh(win);
+}

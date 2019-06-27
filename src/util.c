@@ -54,8 +54,10 @@ void fireRandom(Missile *missiles, Invader *invaders) {
 		for (i = 1; i < shooterNum; i++) {
 			shooter = shooter->next;
 		}
-		pos.x = shooter->pos.x;
-		pos.y = shooter->pos.y + 1;
-		addMissile(&(missiles), pos, 1);
+		if (shooter != NULL) {
+			pos.x = shooter->pos.x;
+			pos.y = shooter->pos.y + 1;
+			addMissile(&(missiles), pos, 1);
+		}
 	}
 }

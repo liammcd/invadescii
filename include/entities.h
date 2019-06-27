@@ -39,7 +39,7 @@ typedef struct GameInfo {
 	Invader *invaders;
 	Missile *missiles;
 	WINDOW *mainwin;
-	WINDOW *scorewin;
+	WINDOW *healthwin;
 	int x, y; // Screen size
 } GameInfo;
 

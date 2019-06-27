@@ -79,7 +79,7 @@ void gameLoop(GameInfo *game) {
 		pthread_attr_t attr;
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-		_args->mainwin = game->scorewin;
+		_args->mainwin = game->healthwin;
 		_args->buf = &_input;
 		
 		pthread_create(&keyInput, &attr, keyListener, (void *)_args);
@@ -119,6 +119,7 @@ void gameLoop(GameInfo *game) {
 			/* Redraw */
 			werase(game->mainwin);
 			drawPlayer(game->mainwin, game->player);
+			drawHealth(game->healthwin, game->player);
 			drawInvaders(game->mainwin, game->invaders);
 			drawMissiles(game->mainwin, game->missiles);
 			wrefresh(game->mainwin);
@@ -148,11 +149,11 @@ int main(int argc, char *argv[]) {
 	noecho();
 	getmaxyx(stdscr, game.y, game.x);
 	game.mainwin = newwin((game.y)-1, game.x, 0, 0);
-	game.scorewin = newwin(1, game.x, (game.y)-1, 0);
+	game.healthwin = newwin(1, game.x, (game.y)-1, 0);
 	init_color(COLOR_GREEN, 0, 1000, 0);
 	init_pair(1, COLOR_GREEN, COLOR_BLACK);
 	wbkgd(game.mainwin, COLOR_PAIR(1));
-	wbkgd(game.scorewin, COLOR_PAIR(1));
+	wbkgd(game.healthwin, COLOR_PAIR(1));
 	refresh();
 
 	pthread_mutex_init(&lock, NULL);
