@@ -19,3 +19,7 @@ Running in invadescii directory:
 ```
 
 Use left and right arrow keys to move, spacebar to fire a missile
+
+## Screenshot
+
+![](invadescii.png)
