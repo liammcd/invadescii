@@ -37,7 +37,13 @@ int randNum(int max) {
 
 int countInvaders(Invader *invaders) {
 
-	return 1;
+	int count = 0;
+	Invader *i = invaders;
+	while (i != NULL) {
+		count += 1;
+		i = i->next;
+	}
+	return count;
 }
 
 void fireRandom(Missile *missiles, Invader *invaders) {
